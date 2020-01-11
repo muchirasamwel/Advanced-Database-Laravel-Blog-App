@@ -17,60 +17,41 @@ class Blog extends Model
     }
     public function scopeofToday($query)
     {
-        return $query->where('created_at', '>', Carbon::yesterday());
+        return $query->where('created_at', '>', Carbon::yesterday()->addHours(24));
     }
     public function scopeofSearch($query,$value)
     {
         return $query->where('title', '=', $value);
     }
+    function simple_crypt( $string, $action = 'e' ) {
+        // you may change these values to your own
+        $secret_key = 'my_simple_secret_key';
+        $secret_iv = 'my_simple_secret_iv';
 
+        $output = false;
+        $encrypt_method = "AES-256-CBC";
+        $key = hash( 'sha256', $secret_key );
+        $iv = substr( hash( 'sha256', $secret_iv ), 0, 16 );
+
+        if( $action == 'e' ) {
+            $output = base64_encode( openssl_encrypt( $string, $encrypt_method, $key, 0, $iv ) );
+        }
+        else if( $action == 'd' ){
+            $output = openssl_decrypt( base64_decode( $string ), $encrypt_method, $key, 0, $iv );
+        }
+
+        return $output;
+    }
     //mutator encryps my content data
     public function setContentAttribute($value)
     {
-        function simple_crypt( $string, $action = 'e' ) {
-            // you may change these values to your own
-            $secret_key = 'my_simple_secret_key';
-            $secret_iv = 'my_simple_secret_iv';
 
-            $output = false;
-            $encrypt_method = "AES-256-CBC";
-            $key = hash( 'sha256', $secret_key );
-            $iv = substr( hash( 'sha256', $secret_iv ), 0, 16 );
-
-            if( $action == 'e' ) {
-                $output = base64_encode( openssl_encrypt( $string, $encrypt_method, $key, 0, $iv ) );
-            }
-            else if( $action == 'd' ){
-                $output = openssl_decrypt( base64_decode( $string ), $encrypt_method, $key, 0, $iv );
-            }
-
-            return $output;
-        }
-        return $this->attributes['content']= simple_crypt($value);
+        return $this->attributes['content']=$this->simple_crypt($value);
     }
 
     //Accessor decrypts the data before displaying
     public function getContentAttribute($value)
     {
-        function simple_crypt( $string, $action = 'e' ) {
-            // you may change these values to your own
-            $secret_key = 'my_simple_secret_key';
-            $secret_iv = 'my_simple_secret_iv';
-
-            $output = false;
-            $encrypt_method = "AES-256-CBC";
-            $key = hash( 'sha256', $secret_key );
-            $iv = substr( hash( 'sha256', $secret_iv ), 0, 16 );
-
-            if( $action == 'e' ) {
-                $output = base64_encode( openssl_encrypt( $string, $encrypt_method, $key, 0, $iv ) );
-            }
-            else if( $action == 'd' ){
-                $output = openssl_decrypt( base64_decode( $string ), $encrypt_method, $key, 0, $iv );
-            }
-
-            return $output;
-        }
-        return $this->attributes['content']= simple_crypt($value,'d');
+        return $this->attributes['content']= $this->simple_crypt($value,'d');
     }
 }

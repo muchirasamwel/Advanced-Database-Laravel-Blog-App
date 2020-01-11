@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Blog;
 use App\Mail\MyMail;
+use App\Repositories\BlogRepository;
 use App\Scopes\TodaysBlog;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
@@ -17,9 +18,11 @@ use Illuminate\Support\Str;
 
 class BlogController extends Controller
 {
-    public function __construct()
+    public $blogRepository;
+    public function __construct(BlogRepository $blogRepository)
     {
         $this->middleware('auth');
+        $this->blogRepository=$blogRepository;
     }
 
     public function index()
@@ -27,14 +30,14 @@ class BlogController extends Controller
         $logged_user =  Auth::user();
 
         $blogs = Cache::remember('blogs', 1, function () {
-            return Blog::all();;
+            return $this->blogRepository->all();
         });
         return view('manageblogs')->with(['blogs' => $blogs, 'user' => $logged_user]);
     }
     public function todaysBlog(){
         $logged_user = Auth::user();
         $blogs = Cache::remember('todaysblogs', 10, function () {
-            return Blog::ofToday()->get();
+            return $this->blogRepository->todaysblog();
         });
         return view('todaysblogs')->with(['blogs' => $blogs, 'user' => $logged_user]);
        // var_dump($data);
@@ -42,7 +45,7 @@ class BlogController extends Controller
     public function searchBlog(Request $request){
         $title=$request->input('title');
         $logged_user = Auth::user();
-        $blogs = Blog::ofSearch($title)->get();
+        $blogs = $this->blogRepository->search($title);
        // var_dump($blogs);
         if(trim($title)=="")
             return redirect()->back();

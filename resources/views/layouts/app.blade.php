@@ -64,9 +64,9 @@
                             @endif
                         @else
 
-                            <li class="nav-item" ><a href="/" class="nav-link">Home</a></li>
                             <li class="nav-item" ><a href="{{route('blog.index')}}" class="nav-link">Add Blog</a></li>
                             <li class="nav-item" ><a href="/today" class="nav-link">Todays Blogs</a></li>
+                            <li class="nav-item" ><a href="/" class="nav-link">All Blogs</a></li>
 
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>

@@ -4,15 +4,18 @@
 @endsection
 @section('content')
     <div>
-        <h1 class="text-center">Blogs</h1>
+        <h1 class="text-center">All Blogs</h1>
 
         <div class="container">
-            <div>
+            <div class="d-flex justify-content-around">
                 <form method="POST" action="/search" class="row" >
-                    @method('post')
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                    <input type="text" name="title" class="form-control">
-                    <button type="submit" class="btn btn-outline-success">Search</button>
+                    @method('post')
+                    <div class="row ">
+                        <label class="btn">Title</label>
+                        <input type="text" name="title" class="form-control col">
+                        <button type="submit" class="btn small btn-outline-success col mx-1">Search</button>
+                    </div>
                 </form>
             </div>
             @if($blogs)

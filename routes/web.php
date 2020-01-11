@@ -19,4 +19,5 @@ Route::resource('blog', 'BlogController');
 Route::get('/delete/{id}', 'BlogController@destroy');
 Route::get('/today', 'BlogController@todaysBlog');
 Route::post('/search', 'BlogController@searchBlog');
+Route::get('/search', 'HomeController@index');
 
